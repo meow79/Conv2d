@@ -2,28 +2,28 @@ module Conv1d where
 
 import Clash.Prelude
 
+
 {-
- Модуль содержит реализацию свёртки вектора ядром нечётного фиксированного
- размера. Получившийся в результате свёртки вектор того же размера, что и исходный,
- причём первые и последние floor(k / 2) (k - размер ядра) его элементов нулевые.
+ This module implements vector convolution with an odd fixed-size kernel.
+ The resulting vector has the same size as the input vector; its first and
+ last floor(kernelSize / 2) elements are zero.
 
- Элементы входного вектора поступают по одному за такт. Элементы результата свёртки
- выдаются на выход также один в такт.
- Элементы ядра на вход поступают все одновременно и должны держаться
- постоянными всё время, пока осуществляется свёртка.
+ Input vector elements arrive one per clock cycle. Convolution result elements
+ are also output one per clock cycle.
+ Kernel elements arrive all at once and must be held constant throughout
+ the convolution.
 
- Элементы входного вектора --- целые числа от 0 до 255.
- Элементы ядра --- целые числа от -128 до 127.
- Элементы результата --- целые числа от (-128) * 255 * kernelSize
- до 127 * 255 * kernelSize
+ Input vector elements are integers from 0 to 255.
+ Kernel elements are integers from -128 to 127.
+ Result elements are integers from (-128) * 255 * kernelSize
+ to 127 * 255 * kernelSize
 -}
 
--- START_PAD и END_PAD хранят информацию о том,
--- сколько ещё padding нулей нужно выдать
+-- START_PAD and END_PAD carry the count of remaining padding zeros to be output
 data ConvStage n = INITIAL n | START_PAD n | CONV | END_PAD n
     deriving (NFDataX, Generic)
 
--- kSize --- размер ядра
+-- kSize --- size of kernel
 data Conv1dState (kSize :: Nat) = Conv1dState
     { stage :: ConvStage (Index (kSize `Div` 2 + 1))
     , inputBuf :: Vec kSize (Unsigned 8)
@@ -32,10 +32,10 @@ data Conv1dState (kSize :: Nat) = Conv1dState
     deriving (NFDataX, Generic)
 
 {-
- Результат умножения веса (Signed 8) на пиксель (Unsigned 8)
- поместится в Signed 16.
- Так как при свёртке складываем n результатов перемножения, итоговый
- результат поместится в Signed (16 + ceil(log(2, n)))
+ Multiplying a weight (Signed 8) by a pixel (Unsigned 8) gives a result
+ that fits in Signed 16.
+ Since convolution sums kSize such products, the final result fits in
+ Signed (16 + ceil(log(2, kSize)))
 -}
 type Conv1dResType kSize = Signed (16 + CLog 2 kSize)
 
