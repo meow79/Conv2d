@@ -25,7 +25,7 @@ prop_testConv1dWithKernelOfSize7 = testConv1dWithKSize (Proxy :: Proxy 7)
 prop_testConv1dWithKernelOfSize9 :: H.Property
 prop_testConv1dWithKernelOfSize9 = testConv1dWithKSize (Proxy :: Proxy 9)
 
-testConv1dWithKSize :: forall kSize. (C.KnownNat kSize, 1 C.<= kSize) => Proxy kSize -> H.Property
+testConv1dWithKSize :: forall kSize. (C.KnownNat kSize, 3 C.<= kSize) => Proxy kSize -> H.Property
 testConv1dWithKSize proxy = H.property $ do
     let kernelSize = C.snatToNum (C.snatProxy proxy) :: Int
     (dutInput, payloadsWithWeights) <- H.forAll $ genDataForMultipleConvs kernelSize
@@ -103,7 +103,7 @@ genDataFor1Conv kSize payloadLen = do
             (True, head payload, length payload == 1, weights) : buildDutInput xs (tail payload) weights
 
 convertInputToClashTypes ::
-    (C.KnownNat kSize, 1 C.<= kSize) =>
+    (C.KnownNat kSize, 3 C.<= kSize) =>
     (Bool, Int, Bool, [Int]) ->
     (Bool, C.Unsigned 8, Bool, Vec.Vec kSize (C.Signed 8))
 convertInputToClashTypes (validI, dataI, lastI, kernel) =

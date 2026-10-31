@@ -4,9 +4,10 @@ import Clash.Prelude
 
 
 {-
- This module implements vector convolution with an odd fixed-size kernel.
- The resulting vector has the same size as the input vector; its first and
- last floor(kernelSize / 2) elements are zero.
+ This module implements vector convolution with a kernel of fixed odd size, containing
+ at least 3 elements. The resulting vector has the same size as the input vector; its first
+ and last floor(kernelSize / 2) elements are zero. Length of one input vector
+ must not be less than length of vector of weights.
 
  Input vector elements arrive one per clock cycle. Convolution result elements
  are also output one per clock cycle.
@@ -40,7 +41,7 @@ data Conv1dState (kSize :: Nat) = Conv1dState
 type Conv1dResType kSize = Signed (16 + CLog 2 kSize)
 
 conv1dStep ::
-    (KnownNat kSize, 1 <= kSize) =>
+    (KnownNat kSize, 3 <= kSize) =>
     Conv1dState kSize ->
     (Bool, Unsigned 8, Bool, Vec kSize (Signed 8)) ->
     (Conv1dState kSize, (Bool, Conv1dResType kSize, Bool))
@@ -97,7 +98,7 @@ conv1dStep state (valid_i, data_i, last_i, weights_i)
                     }
 
 mealyConv1d ::
-    (KnownNat kSize, 1 <= kSize, HiddenClockResetEnable dom) =>
+    (KnownNat kSize, 3 <= kSize, HiddenClockResetEnable dom) =>
     Signal dom (Bool, Unsigned 8, Bool, Vec kSize (Signed 8)) ->
     Signal dom (Bool, Conv1dResType kSize, Bool)
 mealyConv1d = mealy conv1dStep initialState
