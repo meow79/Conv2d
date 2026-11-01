@@ -1,0 +1,28 @@
+on: [pull_request, workflow_dispatch]
+jobs:
+  build_and_test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v7
+
+      - name: Setup Haskell with Stack
+        uses: haskell-actions/setup@v2.12.1
+        id: setup
+        with:
+          enable-stack: true
+          stack-version: "latest"
+          ghc-version: "9.10.3"
+
+      - name: Cache dependencies
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.setup.outputs.stack-root }}
+          key: ${{ runner.os }}-${{ hashFiles('stack.yaml') }}
+
+      - name: Build
+        run: stack build
+
+      - name: Run tests
+        run: stack test
