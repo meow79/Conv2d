@@ -31,7 +31,6 @@ cabal.config
 *.log
 *.tar.gz
 
-bin/
 hie.yaml
 .vscode/
 
