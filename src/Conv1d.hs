@@ -38,7 +38,8 @@ data Conv1dState (kSize :: Nat) = Conv1dState
  Since convolution sums kSize such products, the final result fits in
  Signed (16 + ceil(log(2, kSize)))
 -}
-type Conv1dResType kSize = Signed (16 + CLog 2 kSize)
+type Conv1dResNat kSize = 16 + CLog 2 kSize
+type Conv1dResType kSize = Signed (Conv1dResNat kSize)
 
 conv1dStep ::
     (KnownNat kSize, 3 <= kSize) =>
