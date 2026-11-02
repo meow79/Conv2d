@@ -83,6 +83,7 @@ library
   hs-source-dirs: src
   exposed-modules:
     Conv1d
+    ComputeRow
   default-language: Haskell2010
 
 -- Builds the executable 'clash', with conv2d project in scope
@@ -114,6 +115,7 @@ test-suite test-library
   main-is: unittests.hs
   other-modules:
     Tests.Conv1d
+    Tests.ComputeRow
   build-depends:
     conv2d,
     QuickCheck,
