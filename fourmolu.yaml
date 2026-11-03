@@ -1,0 +1,2 @@
+# Max line length for automatic line breaking
+column-limit: 80

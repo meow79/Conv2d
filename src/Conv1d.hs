@@ -2,7 +2,6 @@ module Conv1d where
 
 import Clash.Prelude
 
-
 {-
  This module implements vector convolution with a kernel of fixed odd size, containing
  at least 3 elements. The resulting vector has the same size as the input vector; its first
