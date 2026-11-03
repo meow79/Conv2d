@@ -1,4 +1,9 @@
-on: [pull_request, workflow_dispatch]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
 jobs:
   build_and_test:
     name: Build and test
