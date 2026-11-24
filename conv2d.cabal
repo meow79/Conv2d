@@ -85,6 +85,7 @@ library
     Conv1d
     ComputeRow
     LineBuffer
+    SwitchToBufs
   default-language: Haskell2010
 
 -- Builds the executable 'clash', with conv2d project in scope
