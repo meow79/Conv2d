@@ -34,14 +34,17 @@ switchToBufsStep ::
 switchToBufsStep curState (valid_i, data_i, last_i) =
     (nextState, inpToBufs)
   where
-    nextState =
-        SwitchToBufsState
-            { writeBufPtr =
-                if last_i
-                    then satAdd SatWrap curWriteBufPtr 1
-                    else curWriteBufPtr
-            , startConv = curStartConv || (last_i && curWriteBufPtr == maxBound - 1)
-            }
+    nextState = case valid_i of
+        False -> curState
+        True ->
+            SwitchToBufsState
+                { writeBufPtr =
+                    if last_i
+                        then satAdd SatWrap curWriteBufPtr 1
+                        else curWriteBufPtr
+                , startConv =
+                    curStartConv || (last_i && curWriteBufPtr == maxBound - 1)
+                }
     inpToBufs =
         replace curWriteBufPtr (valid_i, data_i, True, False)
             $ repeat (valid_i, 0, False, curStartConv)
