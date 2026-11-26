@@ -2,6 +2,14 @@ module SwitchToBufs where
 
 import Clash.Prelude
 
+{-
+ Module sends data_i to the selected buffer with write_en = True.
+ To the other buffers it sends write_en = False, read_en = startConv.
+ startConv is False at startup and becomes True after kSize
+ buffers have been filled.
+ Input flag valid_i is simply forwarded to all buffers.
+-}
+
 data SwitchToBufsState kSize = SwitchToBufsState
     { writeBufPtr :: Index (kSize + 1)
     , startConv :: Bool
